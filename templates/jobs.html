@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recommended Jobs - AI Job Recommendation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(8, 15, 40, 0.72), rgba(8, 15, 40, 0.72)),
+                        url("https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&q=80");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .page-wrapper {
+            max-width: 1450px;
+            margin: auto;
+        }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        .header-box h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffffff, #8fd3ff, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-box p {
+            color: #e8f4ff;
+            font-size: 17px;
+        }
+
+        .domain-badge {
+            display: inline-block;
+            margin-top: 14px;
+            margin-right: 10px;
+            padding: 10px 22px;
+            border-radius: 30px;
+            background: rgba(0, 198, 255, 0.18);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #dff8ff;
+            font-weight: bold;
+        }
+
+        .top-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .top-actions a {
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: 0.3s ease;
+        }
+
+        .top-actions a:hover {
+            background: #00c6ff;
+            color: #081028;
+        }
+
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .job-box {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 24px 20px;
+            overflow: hidden;
+        }
+
+        .job-box h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 26px;
+            color: #ffffff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+
+        thead {
+            background: rgba(0, 198, 255, 0.25);
+        }
+
+        thead th {
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 15px;
+            color: #ffffff;
+        }
+
+        tbody tr {
+            background: rgba(255, 255, 255, 0.05);
+            transition: 0.3s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        tbody td {
+            padding: 14px 12px;
+            font-size: 14px;
+            color: #eaf6ff;
+            vertical-align: top;
+        }
+
+        .company-text {
+            display: block;
+            margin-top: 5px;
+            color: #b9d9ef;
+            font-size: 12px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .source-badge {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 9px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.12);
+            color: #dff8ff;
+            font-size: 11px;
+        }
+
+        .job-link {
+            color: #8fd3ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .job-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty-box {
+            text-align: center;
+            padding: 25px;
+            color: #d9e8f7;
+            font-size: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .jobs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header-box h1 {
+                font-size: 34px;
+            }
+
+            .top-actions {
+                position: static;
+                justify-content: center;
+                margin-bottom: 18px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header-box h1 {
+                font-size: 28px;
+            }
+
+            .job-box h2 {
+                font-size: 24px;
+            }
+
+            thead th, tbody td {
+                font-size: 13px;
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+
+        <div class="header-box">
+
+            <div class="top-actions">
+                <a href="/dashboard">Update Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+
+            <h1>Recommended Jobs For You</h1>
+            <p style="margin-top:10px; color:#e8f4ff;">Welcome, {{ username if username else 'User' }}</p>
+            <p>Your profile and resume have been analyzed by AI. Jobs are separated into Government, Private and Internship sections.</p>
+            <div class="domain-badge">Detected Domain: {{ domain }}</div>
+            <div class="domain-badge">Preferred Type: {{ preferred_job_type }}</div>
+        </div>
+
+        <div class="jobs-grid">
+
+            <!-- Government Jobs -->
+            <div class="job-box">
+                <h2>Government Jobs</h2>
+
+                {% if govt_jobs and govt_jobs|length > 0 %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Score</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in govt_jobs %}
+                            <tr>
+                                <td>
+                                    {{ job.title }}
+                                    {% if job.company %}<span class="company-text">{{ job.company }}</span>{% endif %}
+                                    <span class="source-badge">{{ job.source }}</span>
+                                </td>
+                                <td><span class="score-badge">{{ job.score if job.score is defined else 0 }}%</span></td>
+                                <td>
+                                    {% if job.link %}
+                                        <a class="job-link" href="{{ job.link }}" target="_blank">View</a>
+                                    {% else %}
+                                        Not Available
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="empty-box">No government jobs matched right now.</div>
+                {% endif %}
+            </div>
+
+            <!-- Private Jobs -->
+            <div class="job-box">
+                <h2>Private Jobs</h2>
+
+                {% if private_jobs and private_jobs|length > 0 %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Score</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in private_jobs %}
+                            <tr>
+                                <td>
+                                    {{ job.title }}
+                                    {% if job.company %}<span class="company-text">{{ job.company }}</span>{% endif %}
+                                    {% if job.location %}<span class="company-text">{{ job.location }}</span>{% endif %}
+                                    <span class="source-badge">{{ job.source }}</span>
+                                </td>
+                                <td><span class="score-badge">{{ job.score if job.score is defined else 0 }}%</span></td>
+                                <td>
+                                    {% if job.link %}
+                                        <a class="job-link" href="{{ job.link }}" target="_blank">View</a>
+                                    {% else %}
+                                        Not Available
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="empty-box">No private jobs matched right now.</div>
+                {% endif %}
+            </div>
+
+            <!-- Internship Jobs -->
+            <div class="job-box">
+                <h2>Internships</h2>
+
+                {% if internship_jobs and internship_jobs|length > 0 %}
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Internship Title</th>
+                                <th>Score</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in internship_jobs %}
+                            <tr>
+                                <td>
+                                    {{ job.title }}
+                                    {% if job.company %}<span class="company-text">{{ job.company }}</span>{% endif %}
+                                    {% if job.location %}<span class="company-text">{{ job.location }}</span>{% endif %}
+                                    <span class="source-badge">{{ job.source }}</span>
+                                </td>
+                                <td><span class="score-badge">{{ job.score if job.score is defined else 0 }}%</span></td>
+                                <td>
+                                    {% if job.link %}
+                                        <a class="job-link" href="{{ job.link }}" target="_blank">Apply</a>
+                                    {% else %}
+                                        Not Available
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="empty-box">No internships matched right now.</div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

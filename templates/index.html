@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Job Recommendation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(8, 15, 40, 0.72), rgba(8, 15, 40, 0.72)),
+                        url("https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&q=80");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+        }
+
+        .nav-btn {
+            padding: 10px 22px;
+            margin-left: 12px;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.25);
+        }
+
+        .nav-btn:hover {
+            background: #00c6ff;
+            color: #081028;
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero-box {
+            max-width: 900px;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .hero-box h1 {
+            font-size: 64px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+            background: linear-gradient(90deg, #ffffff, #8fd3ff, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-box p {
+            font-size: 20px;
+            color: #e8f4ff;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .user-count-box {
+            display: inline-block;
+            margin-bottom: 22px;
+            padding: 12px 22px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.20);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        .user-count-box span {
+            color: #00e5ff;
+            font-size: 22px;
+        }
+
+        .hero-box .start-btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 35px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 114, 255, 0.35);
+        }
+
+        .hero-box .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(14, 22, 50, 0.95);
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+            position: relative;
+            animation: popup 0.25s ease;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        @keyframes popup {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            outline: none;
+            font-size: 15px;
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .form-group input::placeholder {
+            color: #cfd9e6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 16px;
+            color: #d7e6f7;
+            font-size: 14px;
+        }
+
+        .switch-text span {
+            color: #00d9ff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 16px 20px;
+            }
+
+            .hero-box h1 {
+                font-size: 42px;
+            }
+
+            .hero-box p {
+                font-size: 16px;
+            }
+
+            .nav-btn {
+                padding: 9px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <button class="nav-btn" onclick="openModal('login')">Login</button>
+        <button class="nav-btn" onclick="openModal('signup')">Signup</button>
+    </div>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div id="popup" style="
+        position: fixed;
+        top: 90px;
+        right: 20px;
+        background: rgba(0,0,0,0.85);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        z-index: 9999;
+        font-weight: bold;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    ">
+        {{ messages[0] }}
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById("popup").style.display = "none";
+        }, 3000);
+    </script>
+  {% endif %}
+{% endwith %}    
+
+    <section class="hero">
+        <div class="hero-box">
+            <h1>AI Job Recommendation</h1>
+            <p>
+                Discover the best jobs based on your profile, resume, skills, and interests.
+                Smart matching with AI to help you find the right opportunity faster.
+            </p>
+            <div class="user-count-box">Total Registered Users: <span>{{ user_count }}</span></div>
+            <br>
+            <button class="start-btn" onclick="openModal('signup')">Get Started</button>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2>Login</h2>
+                <form action="/login" method="POST">
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+                <p class="switch-text">
+                    Don't have an account? <span onclick="showForm('signup')">Signup</span>
+                </p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" style="display:none;">
+                <h2>Signup</h2>
+                <form action="/signup" method="POST">
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Create password" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Signup</button>
+                </form>
+                <p class="switch-text">
+                    Already have an account? <span onclick="showForm('login')">Login</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("authModal");
+        const loginForm = document.getElementById("loginForm");
+        const signupForm = document.getElementById("signupForm");
+
+        function openModal(type) {
+            modal.style.display = "flex";
+            showForm(type);
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        function showForm(type) {
+            if (type === "login") {
+                loginForm.style.display = "block";
+                signupForm.style.display = "none";
+            } else {
+                loginForm.style.display = "none";
+                signupForm.style.display = "block";
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>

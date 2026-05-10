@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if is_update %}Update Profile{% else %}Create Profile{% endif %} - AI Job Recommendation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(rgba(8, 15, 40, 0.72), rgba(8, 15, 40, 0.72)),
+                        url("https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1600&q=80");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-box {
+            width: 100%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 35px 30px;
+        }
+
+        .profile-box h1 {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffffff, #8fd3ff, #00e5ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-box p {
+            text-align: center;
+            color: #e8f4ff;
+            margin-bottom: 28px;
+            font-size: 16px;
+        }
+
+        .profile-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .profile-table tr td {
+            padding: 14px 10px;
+            vertical-align: middle;
+        }
+
+        .profile-table tr td:first-child {
+            width: 30%;
+            font-size: 17px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .profile-table tr td:last-child {
+            width: 70%;
+        }
+
+        .profile-table input,
+        .profile-table select,
+        .profile-table textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            outline: none;
+            font-size: 15px;
+            background: rgba(255,255,255,0.08);
+            color:white;
+        }
+
+        .profile-table select option {
+            background: #1e2b4f;
+            color: #ffffff;
+        }
+
+        .profile-table select:focus option:checked {
+            background: #1e2b4f linear-gradient(0deg, #1e2b4f 0%, #1e2b4f 100%);
+            color: #ffffff;
+        }
+
+        .profile-table input::placeholder,
+        .profile-table textarea::placeholder {
+            color: #d8e4f1;
+        }
+
+        .profile-table input[type="file"] {
+            padding: 10px;
+            color: #d8e4f1;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .profile-table textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .submit-row {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .submit-btn {
+            padding: 14px 34px;
+            border: none;
+            border-radius: 35px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 114, 255, 0.35);
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .resume-note {
+            display: block;
+            margin-top: 8px;
+            color: #d8e4f1;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .top-actions a {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.12);
+            color: black;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: 0.3s ease;
+        }
+
+        .top-actions a:hover {
+            background: #00c6ff;
+            color: #081028;
+        }
+
+        @media (max-width: 768px) {
+            .profile-box {
+                padding: 25px 18px;
+            }
+
+            .profile-box h1 {
+                font-size: 30px;
+            }
+
+            .profile-table,
+            .profile-table tbody,
+            .profile-table tr,
+            .profile-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .profile-table tr {
+                margin-bottom: 10px;
+            }
+
+            .profile-table tr td:first-child {
+                margin-bottom: 8px;
+                width: 100%;
+            }
+
+            .profile-table tr td:last-child {
+                width: 100%;
+            }
+
+            .top-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <div class="profile-box">
+
+            <div class="top-actions">
+                <a href="/logout">Logout</a>
+            </div>
+
+            <h1>{% if is_update %}Update Profile{% else %}Create Profile{% endif %}</h1>
+            <p>
+                {% if is_update %}
+                    Update your details and keep your AI-based job recommendations accurate.
+                {% else %}
+                    Fill your details and upload your resume for smart AI-based job recommendations.
+                {% endif %}
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <p style="margin-bottom:20px; color:#ffffff; font-weight:bold;">{{ messages[0] }}</p>
+              {% endif %}
+            {% endwith %}
+
+            <form action="/profile" method="POST" enctype="multipart/form-data">
+                <table class="profile-table">
+                    <tr>
+                        <td><label for="name">Name</label></td>
+                        <td>
+                            <input type="text" id="name" name="name" placeholder="Enter name"
+                                   value="{{ profile.name if profile else '' }}" required>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="age">Age</label></td>
+                        <td>
+                            <input type="number" id="age" name="age" placeholder="Enter age"
+                                   value="{{ profile.age if profile else '' }}" required>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="qualification">Higher Qualification</label></td>
+                        <td>
+                            <input type="text" id="qualification" name="qualification" placeholder="Enter higher qualification"
+                                   value="{{ profile.qualification if profile else '' }}" required>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="phone">Phone Number</label></td>
+                        <td>
+                            <input type="text" id="phone" name="phone" placeholder="Enter phone number"
+                                   value="{{ profile.phone if profile else '' }}" required>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="gender">Gender</label></td>
+                        <td>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select gender</option>
+                                <option value="Male" {% if profile and profile.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if profile and profile.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if profile and profile.gender == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="location">Location</label></td>
+                        <td>
+                            <input type="text" id="location" name="location" placeholder="Enter city or state"
+                                   value="{{ profile.location if profile else '' }}" required>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="hobby">Hobbies</label></td>
+                        <td>
+                            <input type="text" id="hobby" name="hobby" placeholder="Enter hobbies"
+                                   value="{{ profile.hobby if profile else '' }}">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="preferred_job_type">Preferred Job Type</label></td>
+                        <td>
+                            <select id="preferred_job_type" name="preferred_job_type" required>
+                                <option value="">Select job type</option>
+                                <option value="Government" {% if profile and profile.preferred_job_type == 'Government' %}selected{% endif %}>Government</option>
+                                <option value="Private" {% if profile and profile.preferred_job_type == 'Private' %}selected{% endif %}>Private</option>
+                                <option value="Internship" {% if profile and profile.preferred_job_type == 'Internship' %}selected{% endif %}>Internship</option>
+                                <option value="Both" {% if profile and profile.preferred_job_type == 'Both' %}selected{% endif %}>Both</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="experience_level">Experience Level</label></td>
+                        <td>
+                            <select id="experience_level" name="experience_level">
+                                <option value="">Select experience</option>
+                                <option value="Fresher" {% if profile and profile.experience_level == 'Fresher' %}selected{% endif %}>Fresher</option>
+                                <option value="0-1 Year" {% if profile and profile.experience_level == '0-1 Year' %}selected{% endif %}>0-1 Year</option>
+                                <option value="1-3 Years" {% if profile and profile.experience_level == '1-3 Years' %}selected{% endif %}>1-3 Years</option>
+                                <option value="3+ Years" {% if profile and profile.experience_level == '3+ Years' %}selected{% endif %}>3+ Years</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="skills_text">Extra Skills</label></td>
+                        <td>
+                            <textarea id="skills_text" name="skills_text" placeholder="Enter extra skills separated by comma">{{ profile.skills_text if profile else '' }}</textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="resume">Upload Resume</label></td>
+                        <td>
+                            <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" {% if not is_update %}required{% endif %}>
+                            {% if is_update and profile and profile.resume %}
+                                <span class="resume-note">Current resume: {{ profile.resume.split('/')[-1].split('\\')[-1] }}<br>New upload is optional. If you upload a new resume, old resume will be replaced.</span>
+                            {% else %}
+                                <span class="resume-note">Upload PDF or DOCX resume.</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" class="submit-row">
+                            <button type="submit" class="submit-btn">
+                                {% if is_update %}Update Profile & Find Jobs{% else %}Save Profile & Find Jobs{% endif %}
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
